@@ -14,22 +14,39 @@ SQL Queries:
 
 -- CITY: Since there are many records that have 'not available in demo dataset', use a CASE WHEN statement to update the records to NULL
 
+
 WITH transactions AS
+
 (SELECT 
+
 	fullvisitorid, 
+ 
 	country, 
+ 
  	CASE WHEN
+  
  	city = 'not available in demo dataset' 	THEN NULL
+  
 	ELSE city
+ 
  	END AS city, 
+  
 	totaltransactionrevenue
+ 
 FROM all_sessions
+
 WHERE totaltransactionrevenue IS NOT NULL)
+
 -- 81 rows
+
 SELECT country, city, SUM(totaltransactionrevenue) AS totaltransactionrevenue_region
+
 FROM transactions
+
 WHERE city IS NOT NULL
+
 GROUP BY country, city
+
 ORDER BY totaltransactionrevenue_region DESC
 
 
