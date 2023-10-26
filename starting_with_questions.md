@@ -7,8 +7,11 @@ Answer the following questions and provide the SQL queries used to find the answ
 SQL Queries:
 
 -- Create a CTE with the necessary information needed to answer the question
+
 -- TABLE: all_sessions 
+
 -- COLUMNS: fullvisitorid, country, city, totaltransactionrevenue
+
 -- CITY: Since there are many records that have 'not available in demo dataset', use a CASE WHEN statement to update the records to NULL
 
 WITH transactions AS
@@ -31,7 +34,9 @@ ORDER BY totaltransactionrevenue_region DESC
 
 
 Answer:
+
 The cities that have the highest level of transaction revenue are San Francisco, Sunnyvale and Atlanta, which are all located in the United States.
+
 The countries with the highest level of transaction revenue are United States, Israel, and Australia.
 
 
