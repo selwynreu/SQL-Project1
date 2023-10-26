@@ -18,37 +18,21 @@ SQL Queries:
 WITH transactions AS
 
 (SELECT 
-
 	fullvisitorid, 
- 
 	country, 
- 
  	CASE WHEN
-  
  	city = 'not available in demo dataset' 	THEN NULL
-  
 	ELSE city
- 
  	END AS city, 
-  
 	totaltransactionrevenue
- 
 FROM all_sessions
-
 WHERE totaltransactionrevenue IS NOT NULL)
-
 -- 81 rows
-
 SELECT country, city, SUM(totaltransactionrevenue) AS totaltransactionrevenue_region
-
 FROM transactions
-
 WHERE city IS NOT NULL
-
 GROUP BY country, city
-
 ORDER BY totaltransactionrevenue_region DESC
-
 
 Answer:
 
@@ -62,10 +46,77 @@ The countries with the highest level of transaction revenue are United States, I
 
 SQL Queries:
 
+-- Create a CTE with the necessary information needed to answer the question from the all_sessions table and the products table
+
+-- To find the average number of products ordered from visitors in each city
+
+-- Had to remove the null values as there are many records that do not include the city
+
+-- Also decided to round the average values to 2 decimals and remove the average values that equal to 0 in order to keep it as clean as possible
+
+
+WITH cleanedup_allsessions AS
+(SELECT
+	fullvisitorid,
+	CASE WHEN country = '(not set)' 
+ 	THEN NULL
+	ELSE country
+	END AS country, 
+	CASE WHEN city = 'not available in demo dataset' OR city = '(not set)' 
+	THEN NULL
+	ELSE city
+	END AS city, 
+	productSKU
+ FROM all_sessions
+)
+SELECT 
+	alls.country, 
+	alls.city, 
+	ROUND(CAST(AVG(p.orderedquantity) AS numeric), 2) AS average_ordered_products
+FROM cleanedup_allsessions alls
+JOIN products p ON alls.productSKU = p.sku
+WHERE alls.country IS NOT NULL 
+AND alls.city IS NOT NULL
+GROUP BY alls.country, alls.city
+HAVING AVG(p.orderedquantity) > 0
+ORDER BY country, city
+
+
+-- To find the average number of products ordered from visitors in each country
+
+
+WITH cleanedup_allsessions AS
+(SELECT
+	fullvisitorid,
+	CASE WHEN country = '(not set)' 
+ 	THEN NULL
+	ELSE country
+	END AS country, 
+	CASE WHEN city = 'not available in demo dataset' OR city = '(not set)' 
+	THEN NULL
+	ELSE city
+	END AS city, 
+	productSKU
+ FROM all_sessions
+)
+SELECT 
+	alls.country, 
+	ROUND(CAST(AVG(p.orderedquantity) AS numeric), 2) AS average_ordered_products
+FROM cleanedup_allsessions alls
+JOIN products p ON alls.productSKU = p.sku
+WHERE alls.country IS NOT NULL 
+AND alls.city IS NOT NULL
+GROUP BY alls.country
+HAVING AVG(p.orderedquantity) > 0
+ORDER BY country
 
 
 Answer:
 
+There are 257 different cities listed in the results, so the query gives us 257 different averages. For example, in Buenos Aires, Argentina, the average number of products ordered is 434.50.
+In Rosario, Argentina, the average number of products ordered is 433.00. In Santa Fe, Argentina, the average number of products ordered is 1932.50.
+
+There are 59 different countries listed in the results, so the query gives us 59 different averages. For example, the average number of products ordered in all of Argentina is 767.22. In Australia, the average number of products ordered is 505.45. In Austria, the average number of products ordered is 228.50.
 
 
 
