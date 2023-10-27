@@ -126,10 +126,63 @@ There are 59 different countries listed in the results, so the query gives us 59
 
 SQL Queries:
 
+-- To clean up the data, we'll re-categorize the product categories to more general categories
+-- Removed the values where the total number of ordered quantity is 0
 
+
+WITH category AS
+(
+SELECT 
+	fullvisitorid, 
+	CASE WHEN country = '(not set)' 
+	THEN NULL
+	ELSE country
+	END AS country, 
+	CASE WHEN city = '(not set)' OR city = 'not available in demo dataset' 
+	THEN NULL
+	ELSE city
+	END AS city, 
+	productsku, 
+	CASE 
+	WHEN v2productcategory LIKE '%Accessories%' THEN 'Accessories'
+	WHEN v2productcategory LIKE '%Apparel%' THEN 'Apparel'
+	WHEN v2productcategory LIKE '%Bags%' THEN 'Bags'
+	WHEN v2productcategory LIKE '%Brands%' THEN 'Brands'
+	WHEN v2productcategory LIKE '%Drinkware%' THEN 'Drinkware'
+	WHEN v2productcategory LIKE '%Electronics%' THEN 'Electronics'
+	WHEN v2productcategory LIKE '%Kids%' THEN 'Kids'
+	WHEN v2productcategory LIKE '%Lifestyle%' THEN 'Lifestyle'
+	WHEN v2productcategory LIKE '%Limited Supply%' THEN 'Limited Supply'
+	WHEN v2productcategory LIKE '%Nest%' THEN 'Nest'
+	WHEN v2productcategory LIKE '%Office%' THEN 'Office'
+	WHEN v2productcategory LIKE '%Sale%' THEN 'Sale'
+	WHEN v2productcategory LIKE '%Shop by Brand%' THEN 'Shop by Brand'
+	WHEN v2productcategory LIKE '%Waze%' THEN 'Shop by Brand'
+	WHEN v2productcategory LIKE '%YouTube%' THEN 'Shop by Brand'
+	ELSE NULL
+	END AS product_category
+FROM all_sessions
+)
+SELECT 
+	c.product_category,
+	c.country, 
+	c.city,
+	ROUND(CAST(SUM(p.orderedquantity) AS numeric), 2) AS ordered_products,
+	RANK() OVER(PARTITION BY c.product_category ORDER BY SUM(p.orderedquantity) DESC) AS rank
+FROM category c
+JOIN products p ON c.productSKU = p.sku
+WHERE c.country IS NOT NULL 
+AND c.city IS NOT NULL
+AND c.product_category IS NOT NULL
+GROUP BY c.product_category, c.country, c.city
+HAVING SUM(p.orderedquantity) > 0
+ORDER BY c.product_category, rank, c.country, c.city
 
 Answer:
 
+Based on the ranks, we notice that in most of the product categories, the number of products ordered are from Mountain View and New York.
+
+However, most of our results will be skewed towards the United States, since more than half of our records are from the United States.
 
 
 
