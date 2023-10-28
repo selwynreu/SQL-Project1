@@ -490,9 +490,7 @@ United States: Baby on Board Window Decal
 - Montevideo: Vintage Henley Grey/Black
 
 
-There isn't anything drastic we can tell from the products sold besides some products in particular being the top-selling product in multiple countries such as the Men's Vintage Tank for Australia, Canada, and Israel.
-
-
+There isn't anything drastic we can tell from the products sold besides some products in particular being the top-selling product in multiple countries such as the Men's Vintage Tank for Australia, Canada, and Israel. Also, there are a couple cities in the United States that can be renamed such as Paris since it falls under France and South San Francisco can fall under San Francisco.
 
 
 
