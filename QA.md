@@ -8,5 +8,5 @@ QA Process:
 Describe your QA process and include the SQL queries used to execute it.
 
 - Removing duplicates
-- Filtering out the null values
+- Filtering out the null values as they are incomplete data
 - Matching the tables with those who have similar information such as sales_by_sku and sales_report (productSKU and the total_ordered)
