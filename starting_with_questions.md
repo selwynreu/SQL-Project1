@@ -14,6 +14,10 @@ SQL Queries:
 
 -- CITY: Since there are many records that have 'not available in demo dataset', use a CASE WHEN statement to update the records to NULL
 
+-- Use the SUM aggregate function and GROUP BY function to see the total transaction revenue per city/country
+
+-- Order by total transaction revenue in descending so the highest is listed at the top
+
 
 WITH transactions AS
 
@@ -52,18 +56,22 @@ SQL Queries:
 
 -- Had to remove the null values as there are many records that do not include the city
 
+-- Join the CTE with the products table 
+
 -- Also decided to round the average values to 2 decimals and remove the average values that equal to 0 in order to keep it as clean as possible
 
 
 WITH cleanedup_allsessions AS
 (SELECT
 	fullvisitorid,
-	CASE WHEN country = '(not set)' 
+	CASE 
+ 	WHEN country = '(not set)' 
  	THEN NULL
 	ELSE country
 	END AS country, 
-	CASE WHEN city = 'not available in demo dataset' OR city = '(not set)' 
-	THEN NULL
+	CASE 
+ 	WHEN city = 'not available in demo dataset' THEN NULL
+ 	WHEN city = '(not set)' THEN NULL
 	ELSE city
 	END AS city, 
 	productSKU
@@ -88,12 +96,12 @@ ORDER BY country, city
 WITH cleanedup_allsessions AS
 (SELECT
 	fullvisitorid,
-	CASE WHEN country = '(not set)' 
- 	THEN NULL
+	CASE WHEN country = '(not set)' THEN NULL
 	ELSE country
 	END AS country, 
-	CASE WHEN city = 'not available in demo dataset' OR city = '(not set)' 
-	THEN NULL
+	CASE 
+ 	WHEN city = 'not available in demo dataset' THEN NULL
+ 	WHEN city = '(not set)' THEN NULL
 	ELSE city
 	END AS city, 
 	productSKU
@@ -126,11 +134,15 @@ There are 59 different countries listed in the results, so the query gives us 59
 
 SQL Queries:
 
--- To clean up the data, we'll re-categorize the product categories to more general categories
+-- To clean up the data, we'll re-categorize the product categories to more general categories and remove the ones that are uncertain since some subcategories exist in multiple general categories
+
+-- In the CASE WHEN statement, I used the UPPER function to make sure the data catches as much as possible since it is case-sensitive
 
 -- Removed the values where the total number of ordered quantity is 0
 
 -- After, I found the rank per category for the number of products ordered for each city and country using the RANK and PARTITION BY functions
+
+-- In order to eliminate the number of decimal places, the ROUND function was used to make the data cleaner and more presentable and the orderedquantity column needed to be changed to a numeric value in order to compute the SUM
 
 -- Joined the temporary table to the products table to get the orderedquantity
 
@@ -141,31 +153,31 @@ WITH category AS
 (
 SELECT 
 	fullvisitorid, 
-	CASE WHEN country = '(not set)' 
-	THEN NULL
+	CASE WHEN country = '(not set)' THEN NULL
 	ELSE country
 	END AS country, 
-	CASE WHEN city = '(not set)' OR city = 'not available in demo dataset' 
-	THEN NULL
+	CASE 
+ 	WHEN city = '(not set)' THEN NULL
+ 	WHEN city = 'not available in demo dataset' THEN NULL
 	ELSE city
 	END AS city, 
 	productsku, 
 	CASE 
-	WHEN v2productcategory LIKE '%Accessories%' THEN 'Accessories'
-	WHEN v2productcategory LIKE '%Apparel%' THEN 'Apparel'
-	WHEN v2productcategory LIKE '%Bags%' THEN 'Bags'
-	WHEN v2productcategory LIKE '%Brands%' THEN 'Brands'
-	WHEN v2productcategory LIKE '%Drinkware%' THEN 'Drinkware'
-	WHEN v2productcategory LIKE '%Electronics%' THEN 'Electronics'
-	WHEN v2productcategory LIKE '%Kids%' THEN 'Kids'
-	WHEN v2productcategory LIKE '%Lifestyle%' THEN 'Lifestyle'
-	WHEN v2productcategory LIKE '%Limited Supply%' THEN 'Limited Supply'
-	WHEN v2productcategory LIKE '%Nest%' THEN 'Nest'
-	WHEN v2productcategory LIKE '%Office%' THEN 'Office'
-	WHEN v2productcategory LIKE '%Sale%' THEN 'Sale'
-	WHEN v2productcategory LIKE '%Shop by Brand%' THEN 'Shop by Brand'
-	WHEN v2productcategory LIKE '%Waze%' THEN 'Shop by Brand'
-	WHEN v2productcategory LIKE '%YouTube%' THEN 'Shop by Brand'
+	WHEN UPPER(v2productcategory) LIKE '%ACCESSORIES%' THEN 'Accessories'
+	WHEN UPPER(v2productcategory) LIKE '%APPAREL%' THEN 'Apparel'
+	WHEN UPPER(v2productcategory) LIKE '%BAGS%' THEN 'Bags'
+	WHEN UPPER(v2productcategory) LIKE '%BRANDS%' THEN 'Brands'
+	WHEN UPPER(v2productcategory) LIKE '%DRINKWARE%' THEN 'Drinkware'
+	WHEN UPPER(v2productcategory) LIKE '%ELECTRONICS%' THEN 'Electronics'
+	WHEN UPPER(v2productcategory) LIKE '%KIDS%' THEN 'Kids'
+	WHEN UPPER(v2productcategory) LIKE '%LIFESTYLE%' THEN 'Lifestyle'
+	WHEN UPPER(v2productcategory) LIKE '%LIMITED SUPPLY%' THEN 'Limited Supply'
+	WHEN UPPER(v2productcategory) LIKE '%NEST%' THEN 'Nest'
+	WHEN UPPER(v2productcategory) LIKE '%OFFICE%' THEN 'Office'
+	WHEN UPPER(v2productcategory) LIKE '%SALE%' THEN 'Sale'
+	WHEN UPPER(v2productcategory) LIKE '%SHOP BY BRAND%' THEN 'Shop by Brand'
+	WHEN UPPER(v2productcategory) LIKE '%WAZE%' THEN 'Shop by Brand'
+	WHEN UPPER(v2productcategory) LIKE '%YOUTUBE%' THEN 'Shop by Brand'
 	ELSE NULL
 	END AS product_category
 FROM all_sessions
@@ -193,31 +205,31 @@ WITH category AS
 (
 SELECT 
 	fullvisitorid, 
-	CASE WHEN country = '(not set)' 
-	THEN NULL
+	CASE WHEN country = '(not set)' THEN NULL
 	ELSE country
 	END AS country, 
-	CASE WHEN city = '(not set)' OR city = 'not available in demo dataset' 
-	THEN NULL
+	CASE 
+ 	WHEN city = '(not set)' THEN NULL
+ 	WHEN city = 'not available in demo dataset' THEN NULL
 	ELSE city
 	END AS city, 
 	productsku, 
 	CASE 
-	WHEN v2productcategory LIKE '%Accessories%' THEN 'Accessories'
-	WHEN v2productcategory LIKE '%Apparel%' THEN 'Apparel'
-	WHEN v2productcategory LIKE '%Bags%' THEN 'Bags'
-	WHEN v2productcategory LIKE '%Brands%' THEN 'Brands'
-	WHEN v2productcategory LIKE '%Drinkware%' THEN 'Drinkware'
-	WHEN v2productcategory LIKE '%Electronics%' THEN 'Electronics'
-	WHEN v2productcategory LIKE '%Kids%' THEN 'Kids'
-	WHEN v2productcategory LIKE '%Lifestyle%' THEN 'Lifestyle'
-	WHEN v2productcategory LIKE '%Limited Supply%' THEN 'Limited Supply'
-	WHEN v2productcategory LIKE '%Nest%' THEN 'Nest'
-	WHEN v2productcategory LIKE '%Office%' THEN 'Office'
-	WHEN v2productcategory LIKE '%Sale%' THEN 'Sale'
-	WHEN v2productcategory LIKE '%Shop by Brand%' THEN 'Shop by Brand'
-	WHEN v2productcategory LIKE '%Waze%' THEN 'Shop by Brand'
-	WHEN v2productcategory LIKE '%YouTube%' THEN 'Shop by Brand'
+	WHEN UPPER(v2productcategory) LIKE '%ACCESSORIES%' THEN 'Accessories'
+	WHEN UPPER(v2productcategory) LIKE '%APPAREL%' THEN 'Apparel'
+	WHEN UPPER(v2productcategory) LIKE '%BAGS%' THEN 'Bags'
+	WHEN UPPER(v2productcategory) LIKE '%BRANDS%' THEN 'Brands'
+	WHEN UPPER(v2productcategory) LIKE '%DRINKWARE%' THEN 'Drinkware'
+	WHEN UPPER(v2productcategory) LIKE '%ELECTRONICS%' THEN 'Electronics'
+	WHEN UPPER(v2productcategory) LIKE '%KIDS%' THEN 'Kids'
+	WHEN UPPER(v2productcategory) LIKE '%LIFESTYLE%' THEN 'Lifestyle'
+	WHEN UPPER(v2productcategory) LIKE '%LIMITED SUPPLY%' THEN 'Limited Supply'
+	WHEN UPPER(v2productcategory) LIKE '%NEST%' THEN 'Nest'
+	WHEN UPPER(v2productcategory) LIKE '%OFFICE%' THEN 'Office'
+	WHEN UPPER(v2productcategory) LIKE '%SALE%' THEN 'Sale'
+	WHEN UPPER(v2productcategory) LIKE '%SHOP BY BRAND%' THEN 'Shop by Brand'
+	WHEN UPPER(v2productcategory) LIKE '%WAZE%' THEN 'Shop by Brand'
+	WHEN UPPER(v2productcategory) LIKE '%YOUTUBE%' THEN 'Shop by Brand'
 	ELSE NULL
 	END AS product_category
 FROM all_sessions
