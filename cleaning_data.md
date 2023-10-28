@@ -27,6 +27,7 @@ Below, provide the SQL queries you used to clean your data.
 
 '''
 
+SQL
 SELECT
 	fullvisitorid,
 	CASE WHEN country = '(not set)' 
@@ -50,6 +51,7 @@ SELECT
 
 '''
 
+SQL
 SELECT
 	sku,
 	TRIM(' ' FROM name) AS clean_name
@@ -61,6 +63,7 @@ FROM products
 
 '''
 
+SQL
 SELECT 
 	productsku, 
 	CASE 
@@ -92,6 +95,7 @@ I also used the UPPERCASE statement in case there were inconsistencies with the 
 
 '''
 
+SQL
 SELECT 
 	fullvisitorid, 
 	units_sold, 
