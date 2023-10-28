@@ -25,6 +25,8 @@ Below, provide the SQL queries you used to clean your data.
 
 **-- COUNTRY / CITY (using as a CTE) (NULL VALUES)**
 
+'''
+
 SELECT
 	fullvisitorid,
 	CASE WHEN country = '(not set)' 
@@ -39,17 +41,25 @@ SELECT
 	END AS city, 
 	productSKU
  FROM all_sessions
+ 
+'''
 
 -- When using the country/city, in the WHERE statement, I would make sure that the country and the city is not NULL.
 
 **-- TRIMMING LEADING/TRAILING SPACES**
+
+'''
 
 SELECT
 	sku,
 	TRIM(' ' FROM name) AS clean_name
 FROM products
 
+'''
+
 **-- RE-CATEGORIZING THE PRODUCT SUBCATEGORIES**
+
+'''
 
 SELECT 
 	productsku, 
@@ -73,10 +83,14 @@ SELECT
 	END AS product_category
 FROM all_sessions
 
+'''
+
 -- Since there were some subcategories that belong in multiple general categories, I went with most of the ones that come after Home/
 I also used the UPPERCASE statement in case there were inconsistencies with the capitalization of the text.
 
 **-- UPDATING THE UNIT PRICE**
+
+'''
 
 SELECT 
 	fullvisitorid, 
@@ -84,5 +98,7 @@ SELECT
 	ROUND(CAST(unit_price / 1000000 AS numeric), 2) AS single_unitprice, 
 	ROUND(CAST((units_sold * unit_price / 1000000) AS numeric),2) AS revenue
 FROM analytics
+
+'''
 
 -- I also changed the data type from bigint to numeric so I can use the ROUND function to get rid of the multiple decimal places for cleaner looking data.
