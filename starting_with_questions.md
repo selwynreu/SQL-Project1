@@ -519,13 +519,94 @@ There isn't anything drastic we can tell from the products sold besides some pro
 
 SQL Queries:
 
+-- Create a CTE joining the all_sessions and analytics tables together (both tables cleaned up a bit)
 
+-- Using a subquery to get the total revenue for all the data that was used (without the null countries/cities), we can get a percentage of the revenue generated from each city/country
+
+-- Reordered the results by descending order from highest revenue to lowest
+
+'''
+
+SQL
+WITH joineddata AS
+(
+SELECT 
+	alls.fullvisitorid, 
+	CASE WHEN alls.country = '(not set)' THEN NULL 
+	ELSE alls.country 
+	END AS country, 
+	CASE WHEN alls.city = 'not available in demo dataset' THEN NULL 
+	WHEN alls.city = '(not set)' THEN NULL 		
+	ELSE alls.city 
+	END AS city,
+	a.units_sold, 
+	ROUND(CAST(a.unit_price / 1000000 AS numeric), 2) AS unitprice, 
+	ROUND(CAST((a.units_sold * a.unit_price / 1000000) AS numeric),2) AS revenue
+FROM all_sessions alls
+JOIN analytics a
+USING (fullvisitorid)
+WHERE a.units_sold > 0
+)
+SELECT 
+	country,
+	city,
+	SUM(revenue) / 
+	(SELECT SUM(revenue) AS totalrevenue
+FROM joineddata
+WHERE country IS NOT NULL
+AND city IS NOT NULL) * 100  AS percentage
+FROM joineddata jd
+WHERE country IS NOT NULL
+AND city IS NOT NULL
+GROUP BY country, city
+ORDER BY SUM(revenue) DESC
+
+'''
+
+-- QUERY 2 (only country)
+
+'''
+
+SQL
+WITH joineddata AS
+(
+SELECT 
+	alls.fullvisitorid, 
+	CASE WHEN alls.country = '(not set)' THEN NULL 
+	ELSE alls.country 
+	END AS country, 
+	CASE WHEN alls.city = 'not available in demo dataset' THEN NULL 
+	WHEN alls.city = '(not set)' THEN NULL 		
+	ELSE alls.city 
+	END AS city,
+	a.units_sold, 
+	ROUND(CAST(a.unit_price / 1000000 AS numeric), 2) AS unitprice, 
+	ROUND(CAST((a.units_sold * a.unit_price / 1000000) AS numeric),2) AS revenue
+FROM all_sessions alls
+JOIN analytics a
+USING (fullvisitorid)
+WHERE a.units_sold > 0
+)
+SELECT 
+	country,
+	SUM(revenue) / 
+	(SELECT SUM(revenue) AS totalrevenue
+FROM joineddata
+WHERE country IS NOT NULL
+AND city IS NOT NULL) * 100  AS percentage
+FROM joineddata
+WHERE country IS NOT NULL
+AND city IS NOT NULL
+GROUP BY country
+ORDER BY SUM(revenue) DESC
+
+'''
 
 Answer:
 
+Between the cities, we see that majority of the revenue comes from Mountain View at 69.41%. The next highest on the list is from San Bruno at 15.61%, then New York at 4.79%, which are all located in the United States.
 
+Between just the countries, we see that 99.68% of the revenue comes from the United States, which makes sense since most of the records come from the United States as well. The next highest percentage comes from Canada at 0.11%, then Hong Kong at 0.07%.
 
-
-
-
-
+If we are only looking at the countries, it would be hard to summarize the data unless we only want data specifically for the United States since almost all the revenue is coming from the United States.
+Even when looking at the cities in the United States, there is still a good chunk of the revenue that comes from Mountain View.
