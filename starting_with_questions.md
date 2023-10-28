@@ -263,9 +263,234 @@ However, most of our results will be skewed towards the United States, since mor
 
 SQL Queries:
 
+-- Created 3 CTEs for each table to have a more concise and cleaner dataset to work with when comparing them together (using tables all_sessions, analytics and products)
+
+-- For the analytics table, we needed the fullvisitorid, the units_sold, the unit_price (divided by 1,000,000) and the calculated revenue
+
+-- For the all_sessions table, we needed the fullvisitorid, country, city, and productSKU
+
+-- For the products table, we needed the sku and a cleaned up version of the product name (to clean up the leading and trailing spaces and make sure the names are consistent)
+
+-- Then we would include the rank for products sold from highest total revenue and partition it per city/country
+
+
+-- The first query is to find the top-selling products in each city and the second query is for each country
+
+
+WITH 
+testdata AS
+(
+SELECT 
+	fullvisitorid, 
+	units_sold, 
+	ROUND(CAST(unit_price / 1000000 AS numeric), 2) AS single_unitprice, 
+	ROUND(CAST((units_sold * unit_price / 1000000) AS numeric),2) AS revenue
+FROM analytics
+WHERE units_sold > 0
+),
+allsessions_new AS
+(
+SELECT
+	fullvisitorid,
+	CASE WHEN country = '(not set)' 
+ 	THEN NULL
+	ELSE country
+	END AS country, 
+	CASE 
+	WHEN city = 'not available in demo dataset' THEN NULL
+	WHEN city = '(not set)' THEN NULL
+	ELSE city
+	END AS city, 
+	productSKU
+ FROM all_sessions
+),
+product_info AS
+(
+SELECT
+	sku,
+	TRIM(' ' FROM name) AS clean_name
+FROM products
+)
+SELECT 
+	alls.country,
+	alls.city,
+	p.sku, 
+	p.clean_name, 
+	SUM(t.revenue) AS total,
+	RANK () OVER(PARTITION BY alls.country ORDER BY SUM(t.revenue) DESC) AS rank 
+FROM allsessions_new alls
+JOIN testdata t ON t.fullvisitorid = alls.fullvisitorid
+JOIN product_info p ON alls.productsku = p.sku
+WHERE alls.country IS NOT NULL AND alls.city IS NOT NULL
+GROUP BY alls.country, alls.city, p.sku, p.clean_name
+HAVING SUM(revenue) > 0
+ORDER BY alls.country, alls.city, rank
+
+
+-- QUERY 2
+
+
+WITH 
+testdata AS
+(
+SELECT 
+	fullvisitorid, 
+	units_sold, 
+	ROUND(CAST(unit_price / 1000000 AS numeric), 2) AS single_unitprice, 
+	ROUND(CAST((units_sold * unit_price / 1000000) AS numeric),2) AS revenue
+FROM analytics
+WHERE units_sold > 0
+),
+allsessions_new AS
+(
+SELECT
+	fullvisitorid,
+	CASE WHEN country = '(not set)' 
+ 	THEN NULL
+	ELSE country
+	END AS country, 
+	CASE 
+	WHEN city = 'not available in demo dataset' THEN NULL
+	WHEN city = '(not set)' THEN NULL
+	ELSE city
+	END AS city, 
+	productSKU
+ FROM all_sessions
+),
+product_info AS
+(
+SELECT
+	sku,
+	TRIM(' ' FROM name) AS clean_name
+FROM products
+)
+SELECT 
+	alls.country,
+	p.sku,
+	p.clean_name, 
+	SUM(t.revenue) AS total,
+	RANK () OVER(PARTITION BY alls.country ORDER BY SUM(t.revenue) DESC) AS rank 
+FROM allsessions_new alls
+JOIN testdata t ON t.fullvisitorid = alls.fullvisitorid
+JOIN product_info p ON alls.productsku = p.sku
+WHERE alls.country IS NOT NULL AND alls.city IS NOT NULL
+GROUP BY alls.country, p.sku, p.clean_name
+HAVING SUM(revenue) > 0
+ORDER BY alls.country, rank
 
 
 Answer:
+
+Looking at all the top rank in each country, the top-selling product in each city/country is as followed:
+
+Australia: Men's Vintage Tank
+- Sydney: Men's Vintage Tank
+
+Canada: Men's Vintage Tank
+- Kitchener: 5-Panel Cap
+- Toronto: Men's Vintage Tank
+
+Chile: Sport Bag
+- Santiago: Sport Bag
+
+Colombia: Men's 3/4 Sleeve Henley
+- Bogota: Men's 3/4 Sleeve Henley
+
+Finland: Android Onesie Gold
+- Helsinki: Android Onesie Gold
+
+France: Android Lunch Kit
+- Courbevoie: Android Wool Heather Cap Heather/Black
+- Paris: Android Lunch Kit
+
+Germany: 22 oz Bottle Infuser
+- Berlin: Doodle Decal
+- Hamburg: 22 oz Bottle Infuser
+- Munich: Men's 100% Cotton Short Sleeve Hero Tee Red
+
+Hong Kong: Device Stand
+- Hong Kong: Device Stand
+
+India: Bongo Cupholder Bluetooth Speaker
+- Hyderabad: Bongo Cupholder Bluetooth Speaker
+
+Indonesia: Windup Android
+- Jakarta: Windup Android
+
+Ireland: Laptop Backpack
+- Dublin: Laptop Backpack
+
+Israel: Men's Vintage Tank
+- Tel Aviv-Yafo: Men's Vintage Tank
+
+Japan: 5-Panel Snapback Cap
+- Minato: 5-Panel Snapback Cap
+- Osaka: Infant Short Sleeve Tee Red
+- Yokohama: Rucksack
+
+Singapore: Men's Short Sleeve Performance Badge Tee Navy
+- Singapore: Men's Short Sleeve Performance Badge Tee Navy
+
+South Korea: Dress Socks
+- Seoul: Dress Socks
+
+Spain: Protect Smoke + CO White Wired Alarm-USA
+- Madrid: Protect Smoke + CO White Wired Alarm-USA
+
+Sweden: Android Rise 14 oz Mug
+- Stockholm: Android Rise 14 oz Mug
+
+Switzerland: Rocket Flashlight
+- Zurich: Rocket Flashlight
+
+Taiwan: Spiral Notebook and Pen Set
+- Zhongli District: Spiral Notebook and Pen Set
+
+Thailand: 26 oz Double Wall Insulated Bottle
+- Bangkok: 26 oz Double Wall Insulated Bottle
+
+United Kingdom: Tote Bag
+- London: Tote Bag
+
+United States: Baby on Board Window Decal
+- Ann Arbor: Men's Vintage Tank
+- Atlanta: Onesie Green
+- Austin: RFID Journal
+- Cambridge: Screen Cleaning Cloth
+- Charlotte: Lunch Bag
+- Chicago: Learning Thermostat 3rd Gen-USA - Copper
+- Cupertino: Protect Smoke + CO White Wired Alarm-USA
+- Dallas: Leatherette Notebook Combo
+- Denver: Twill Cap
+- Detroit: 22 oz Water Bottle
+- Fremont: Protect Smoke + CO White Battery Alarm-USA
+- Houston: Sunglasses
+- Irvine: Men's Vintage Badge Tee Sage
+- Kirkland: Women's Long Sleeve Tee Lavender
+- Los Angeles: Cam Indoor Security Camera - USA
+- Milpitas: Women's Short Sleeve Hero Dark Grey
+- Mountain View: Baby on Board Window Decal
+- Nashville: Learning Thermostat 3rd Gen-USA - Stainless Steel
+- New York: Collapsible Shopping Bag
+- Palo Alto: Cam Outdoor Security Camera - USA
+- Paris: Women's Quilted Insulated Vest Black ***
+- Phoenix: Men's Short Sleeve Hero Tee Heather
+- Pittsburgh: Hard Cover Journal
+- Salem: Men's Zip Hoodie
+- San Bruno: 22 oz Bottle Infuser
+- San Diego: Doodle Decal
+- San Francisco: Learning Thermostat 3rd Gen-USA - Stainless Steel
+- San Jose: 22 oz Android Bottle
+- Santa Clara: Clip-on Compact Charger
+- Santa Monica: Slim Utility Travel Bag
+- Seattle: Cam Indoor Security Camera - USA
+- South San Francisco: Rucksack ***
+- Sunnyvale: Men's Covertible Vest-Jacket Pewter
+- Washington: Bib White
+- Montevideo: Vintage Henley Grey/Black
+
+
+There isn't anything drastic we can tell from the products sold besides some products in particular being the top-selling product in multiple countries such as the Men's Vintage Tank for Australia, Canada, and Israel.
 
 
 
