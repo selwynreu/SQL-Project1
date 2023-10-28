@@ -18,7 +18,9 @@ SQL Queries:
 
 -- Order by total transaction revenue in descending so the highest is listed at the top
 
+'''
 
+SQL
 WITH transactions AS
 
 (SELECT 
@@ -37,6 +39,8 @@ FROM transactions
 WHERE city IS NOT NULL
 GROUP BY country, city
 ORDER BY totaltransactionrevenue_region DESC
+
+'''
 
 Answer:
 
@@ -60,7 +64,9 @@ SQL Queries:
 
 -- Also decided to round the average values to 2 decimals and remove the average values that equal to 0 in order to keep it as clean as possible
 
+'''
 
+SQL
 WITH cleanedup_allsessions AS
 (SELECT
 	fullvisitorid,
@@ -89,10 +95,13 @@ GROUP BY alls.country, alls.city
 HAVING AVG(p.orderedquantity) > 0
 ORDER BY country, city
 
+'''
 
 -- To find the average number of products ordered from visitors in each country
 
+'''
 
+SQL
 WITH cleanedup_allsessions AS
 (SELECT
 	fullvisitorid,
@@ -118,6 +127,7 @@ GROUP BY alls.country
 HAVING AVG(p.orderedquantity) > 0
 ORDER BY country
 
+'''
 
 Answer:
 
@@ -149,6 +159,9 @@ SQL Queries:
 
 -- This query is for each city
 
+'''
+
+SQL
 WITH category AS
 (
 SELECT 
@@ -197,10 +210,13 @@ GROUP BY c.product_category, c.country, c.city
 HAVING SUM(p.orderedquantity) > 0
 ORDER BY c.product_category, rank, c.country, c.city
 
+'''
 
 -- This query would be to find the country with the highest number of products and see if there is a pattern.
 
+'''
 
+SQL
 WITH category AS
 (
 SELECT 
@@ -248,14 +264,13 @@ GROUP BY c.product_category, c.country
 HAVING SUM(p.orderedquantity) > 0
 ORDER BY c.product_category, rank, c.country
 
+'''
 
 Answer:
 
 Based on the ranks, we notice that in most of the product categories, the number of products ordered are from Mountain View and New York in the United States. The country with the highest number of products ordered in all the product categories is the United States. After United States, the next few countries with the highest number of products ordered varies between Canada, India, United Kingdom, and a few others but these four countries are usually at the top, based on their rank.
 
 However, most of our results will be skewed towards the United States, since more than half of our records are from the United States.
-
-
 
 
 **Question 4: What is the top-selling product from each city/country? Can we find any pattern worthy of noting in the products sold?**
@@ -276,7 +291,9 @@ SQL Queries:
 
 -- The first query is to find the top-selling products in each city and the second query is for each country
 
+'''
 
+SQL
 WITH 
 testdata AS
 (
@@ -326,10 +343,13 @@ GROUP BY alls.country, alls.city, p.sku, p.clean_name
 HAVING SUM(revenue) > 0
 ORDER BY alls.country, alls.city, rank
 
+'''
 
 -- QUERY 2
 
+'''
 
+SQL
 WITH 
 testdata AS
 (
@@ -378,6 +398,7 @@ GROUP BY alls.country, p.sku, p.clean_name
 HAVING SUM(revenue) > 0
 ORDER BY alls.country, rank
 
+'''
 
 Answer:
 
