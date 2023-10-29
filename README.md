@@ -13,8 +13,8 @@
 ### 
 
 ## Results
-(fill in what you discovered this data could tell you and how you used the data to answer those questions)
-This data gives us information on 
+This data gives us information on the site visits and sales on a website. We have information on where the visits are coming from, what they searched for, what they purchased, the time and date, the stock level of each product, product names, etc.
+Through using different combinations of these data tables, we found which cities and countries have the highest transaction revenue, the average number of products ordered from each city and country, the types of product from each city and country, the top-selling product from each city and country and the impact of the revenue generated on the website from each city and country.
 
 ## Challenges 
 
