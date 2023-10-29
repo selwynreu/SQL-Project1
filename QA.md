@@ -8,5 +8,34 @@ QA Process:
 Describe your QA process and include the SQL queries used to execute it.
 
 - Removing duplicates
-- Filtering out the null values as they are incomplete data
+
+
+
+- Filtering out the null values as they are incomplete data (using a CTE then filtering out the null values)
+
+WITH qatest AS
+(
+SELECT 
+	fullvisitorid,
+	CASE 
+	WHEN country = '(not set)' THEN NULL
+	ELSE country
+	END AS country,
+	CASE 
+	WHEN city = '(not set)' THEN NULL
+	WHEN city = 'not available in demo dataset' THEN NULL
+	ELSE city
+	END AS city
+FROM all_sessions
+)
+SELECT *
+FROM qatest
+WHERE country IS NOT NULL
+AND city IS NOT NULL
+  
 - Matching the tables with those who have similar information such as sales_by_sku and sales_report (productSKU and the total_ordered)
+
+SELECT sbs.productsku, sbs.total_ordered, sr.productsku, sr.total_ordered
+FROM sales_by_sku sbs
+JOIN sales_report sr USING (productsku)
+WHERE sbs.total_ordered != sr.total_ordered
