@@ -1,7 +1,8 @@
 # Final-Project-Transforming-and-Analyzing-Data-with-SQL
 
 ## Project/Goals
-(fill in your description and goals here)
+This project is a test to see how I can analyze and transform data with the given raw data files on ecommerce and come up with different conclusions to the questions asked. 
+The goals are to assess my SQL knowledge, whether I am able to implement different SQL techniques, clean the data as much as possible and verify my ability to test the quality assurance of my results. 
 
 ## Process
 ### First, after importing all the csv files, I looked at all the tables to see what I would be working with and how I would want to clean the tables to make them more concise and only take what I would need from the tables without altering the raw data.
