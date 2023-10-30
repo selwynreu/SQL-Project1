@@ -21,23 +21,31 @@ SQL Queries:
 '''
 
 SQL
-WITH transactions AS
+CREATE TEMP TABLE tbl AS
+SELECT fullvisitorid, country, city, totaltransactionrevenue, date, productsku, productquantity, productprice, v2productname, v2productcategory, ROW_NUMBER () OVER(PARTITION BY fullvisitorid, country, city ORDER BY fullvisitorid) AS rownum
+FROM all_sessions
 
-(SELECT 
+DELETE FROM tbl
+WHERE rownum > 1
+
+WITH transactions AS
+(
+SELECT 
 	fullvisitorid, 
 	country, 
- 	CASE WHEN
- 	city = 'not available in demo dataset' 	THEN NULL
-	ELSE city
- 	END AS city, 
-	totaltransactionrevenue
-FROM all_sessions
-WHERE totaltransactionrevenue IS NOT NULL)
--- 81 rows
-SELECT country, city, SUM(totaltransactionrevenue) AS totaltransactionrevenue_region
-FROM transactions
-WHERE city IS NOT NULL
-GROUP BY country, city
+	CASE WHEN city = 'not available in demo dataset' THEN NULL 
+	ELSE city END AS city, 	
+	totaltransactionrevenue 
+FROM tbl 
+WHERE totaltransactionrevenue IS NOT NULL) 
+-- 77 rows 
+SELECT 
+	country, 
+	city, 
+	SUM(totaltransactionrevenue) AS totaltransactionrevenue_region 
+FROM transactions 
+WHERE city IS NOT NULL 
+GROUP BY country, city 
 ORDER BY totaltransactionrevenue_region DESC
 
 '''
