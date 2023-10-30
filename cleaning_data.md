@@ -21,7 +21,17 @@ Below, provide the SQL queries you used to clean your data.
 
 **-- GETTING RID OF DUPLICATES**
 
+'''
 
+SQL
+CREATE TEMP TABLE tbl AS
+SELECT fullvisitorid, country, city, totaltransactionrevenue, date, productsku, productquantity, productprice, v2productname, v2productcategory, ROW_NUMBER () OVER(PARTITION BY fullvisitorid, country, city ORDER BY fullvisitorid) AS rownum
+FROM all_sessions
+
+DELETE FROM tbl
+WHERE rownum > 1
+
+'''
 
 **-- COUNTRY / CITY (using as a CTE) (NULL VALUES)**
 
