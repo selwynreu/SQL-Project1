@@ -6,11 +6,9 @@
 ## Process
 ### First, after importing all the csv files, I looked at all the tables to see what I would be working with and how I would want to clean the tables to make them more concise and only take what I would need from the tables without altering the raw data.
 ### Rather than cleaning the data immediately, I went to the questions to see what I would need in order to answer the questions, then I noted down the columns I would need on the side.
-### Once 
-### 
-### 
-### 
-### 
+### Once I have all the information needed and cleaned up the data, I thought of how I would want to run the query, using which functions.
+### I decided that creating a TEMP table and using CTEs would make running the query easier as I answer each of the questions.
+### After running the queries, I wanted to check if my data made sense with the values from the table.
 
 ## Results
 This data gives us information on the site visits and sales on a website. We have information on where the visits are coming from, what they searched for, what they purchased, the time and date, the stock level of each product, product names, etc.
