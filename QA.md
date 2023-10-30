@@ -7,9 +7,14 @@ These inconsistencies would alter the final result.
 QA Process:
 Describe your QA process and include the SQL queries used to execute it.
 
-- Removing duplicates
+- Removing duplicates by creating a temporary table to not alter the data and also using 
 
+CREATE TEMP TABLE tbl AS
+SELECT fullvisitorid, country, city, totaltransactionrevenue, date, productsku, productquantity, productprice, v2productname, v2productcategory, ROW_NUMBER () OVER(PARTITION BY fullvisitorid, country, city ORDER BY fullvisitorid) AS rownum
+FROM all_sessions
 
+DELETE FROM tbl
+WHERE rownum > 1
 
 - Filtering out the null values as they are incomplete data (using a CTE then filtering out the null values)
 
@@ -39,3 +44,9 @@ SELECT sbs.productsku, sbs.total_ordered, sr.productsku, sr.total_ordered
 FROM sales_by_sku sbs
 JOIN sales_report sr USING (productsku)
 WHERE sbs.total_ordered != sr.total_ordered
+
+- Checking if the currency code is all the same amongst all the records.
+
+SELECT *
+FROM all_sessions
+WHERE currencycode != 'USD'
