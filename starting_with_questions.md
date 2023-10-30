@@ -8,7 +8,7 @@ SQL Queries:
 
 -- Create a CTE with the necessary information needed to answer the question
 
--- TABLE: all_sessions 
+-- TABLE: all_sessions (temp table tbl)
 
 -- COLUMNS: fullvisitorid, country, city, totaltransactionrevenue
 
@@ -89,7 +89,7 @@ WITH cleanedup_allsessions AS
 	ELSE city
 	END AS city, 
 	productSKU
- FROM all_sessions
+ FROM tbl --temp table
 )
 SELECT 
 	alls.country, 
@@ -122,7 +122,7 @@ WITH cleanedup_allsessions AS
 	ELSE city
 	END AS city, 
 	productSKU
- FROM all_sessions
+ FROM tbl --temp table
 )
 SELECT 
 	alls.country, 
@@ -139,11 +139,9 @@ ORDER BY country
 
 Answer:
 
-There are 257 different cities listed in the results, so the query gives us 257 different averages. For example, in Buenos Aires, Argentina, the average number of products ordered is 434.50.
-In Rosario, Argentina, the average number of products ordered is 433.00. In Santa Fe, Argentina, the average number of products ordered is 1932.50.
+There are 257 different cities listed in the results, so the query gives us 257 different averages. For example, in Buenos Aires, Argentina, the average number of products ordered is 488.40. In Rosario, Argentina, the average number of products ordered is 433.00. In Santa Fe, Argentina, the average number of products ordered is 3682.00.
 
-There are 59 different countries listed in the results, so the query gives us 59 different averages. For example, the average number of products ordered in all of Argentina is 767.22. In Australia, the average number of products ordered is 505.45. In Austria, the average number of products ordered is 228.50.
-
+There are 59 different countries listed in the results, so the query gives us 59 different averages. For example, the average number of products ordered in all of Argentina is 936.71. In Australia, the average number of products ordered is 515.21. In Austria, the average number of products ordered is 245.33.
 
 
 
@@ -201,7 +199,7 @@ SELECT
 	WHEN UPPER(v2productcategory) LIKE '%YOUTUBE%' THEN 'Shop by Brand'
 	ELSE NULL
 	END AS product_category
-FROM all_sessions
+FROM tbl --temp table
 )
 SELECT 
 	c.product_category,
@@ -256,7 +254,7 @@ SELECT
 	WHEN UPPER(v2productcategory) LIKE '%YOUTUBE%' THEN 'Shop by Brand'
 	ELSE NULL
 	END AS product_category
-FROM all_sessions
+FROM tbl --temp table
 )
 SELECT 
 	c.product_category,
@@ -276,9 +274,11 @@ ORDER BY c.product_category, rank, c.country
 
 Answer:
 
-Based on the ranks, we notice that in most of the product categories, the number of products ordered are from Mountain View and New York in the United States. The country with the highest number of products ordered in all the product categories is the United States. After United States, the next few countries with the highest number of products ordered varies between Canada, India, United Kingdom, and a few others but these four countries are usually at the top, based on their rank.
+Based on the ranks, we notice that in most of the product categories, the number of products ordered are from Mountain View and New York in the United States, with the exception of San Francisco ranking 1st in Brands and 2nd in Drinkware. For the products under Lifestyle, Santiago, Chile is ranked 2nd.
 
-However, most of our results will be skewed towards the United States, since more than half of our records are from the United States.
+The country with the highest number of products ordered in all the product categories is the United States. After United States, the next few countries with the highest number of products ordered varies between Canada, India, United Kingdom, and a few others but these four countries are usually at the top, based on their rank.
+
+Most of our results will be skewed towards the United States, since more than half of our records are from the United States.
 
 
 **Question 4: What is the top-selling product from each city/country? Can we find any pattern worthy of noting in the products sold?**
@@ -327,7 +327,7 @@ SELECT
 	ELSE city
 	END AS city, 
 	productSKU
- FROM all_sessions
+ FROM tbl --temp table
 ),
 product_info AS
 (
@@ -383,7 +383,7 @@ SELECT
 	ELSE city
 	END AS city, 
 	productSKU
- FROM all_sessions
+ FROM tbl --temp table
 ),
 product_info AS
 (
@@ -514,7 +514,7 @@ United States: Baby on Board Window Decal
 - Santa Monica: Slim Utility Travel Bag
 - Seattle: Cam Indoor Security Camera - USA
 - South San Francisco: Rucksack ***
-- Sunnyvale: Men's Covertible Vest-Jacket Pewter
+- Sunnyvale: Men's Convertible Vest-Jacket Pewter
 - Washington: Bib White
 - Montevideo: Vintage Henley Grey/Black
 
@@ -550,7 +550,7 @@ SELECT
 	a.units_sold, 
 	ROUND(CAST(a.unit_price / 1000000 AS numeric), 2) AS unitprice, 
 	ROUND(CAST((a.units_sold * a.unit_price / 1000000) AS numeric),2) AS revenue
-FROM all_sessions alls
+FROM tbl alls --temp table
 JOIN analytics a
 USING (fullvisitorid)
 WHERE a.units_sold > 0
@@ -590,7 +590,7 @@ SELECT
 	a.units_sold, 
 	ROUND(CAST(a.unit_price / 1000000 AS numeric), 2) AS unitprice, 
 	ROUND(CAST((a.units_sold * a.unit_price / 1000000) AS numeric),2) AS revenue
-FROM all_sessions alls
+FROM tbl alls --temp table
 JOIN analytics a
 USING (fullvisitorid)
 WHERE a.units_sold > 0
@@ -612,7 +612,7 @@ ORDER BY SUM(revenue) DESC
 
 Answer:
 
-Between the cities, we see that majority of the revenue comes from Mountain View at 69.41%. The next highest on the list is from San Bruno at 15.61%, then New York at 4.79%, which are all located in the United States.
+Between the cities, we see that majority of the revenue comes from Mountain View at 70.16%. The next highest on the list is from San Bruno at 15.79%, then New York at 4.80%, which are all in the United States.
 
 Between just the countries, we see that 99.68% of the revenue comes from the United States, which makes sense since most of the records come from the United States as well. The next highest percentage comes from Canada at 0.11%, then Hong Kong at 0.07%.
 
