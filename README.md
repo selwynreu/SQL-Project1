@@ -2,14 +2,17 @@
 
 ## Project/Goals
 This project is a test to see how I can analyze and transform data with the given raw data files on ecommerce and come up with different conclusions to the questions asked. 
+The project is separated in different markdown files which includes the procedure for cleaning the data, the questions given, some questions that I formulated based on the data, the quality assurance process, as well as the ERD.
+
 The goals are to assess my SQL knowledge, whether I am able to implement different SQL techniques, clean the data as much as possible and verify my ability to test the quality assurance of my results. 
 
 ## Process
 ### First, after importing all the csv files, I looked at all the tables to see what I would be working with and how I would want to clean the tables to make them more concise and only take what I would need from the tables without altering the raw data.
 ### Rather than cleaning the data immediately, I went to the questions to see what I would need in order to answer the questions, then I noted down the columns I would need on the side.
-### Once I have all the information needed and cleaned up the data, I thought of how I would want to run the query, using which functions.
-### I decided that creating a TEMP table and using CTEs would make running the query easier as I answer each of the questions.
-### After running the queries, I wanted to check if my data made sense with the values from the table.
+### Once I have all the information needed and cleaned up the data, I thought of how I would want to run the query such as finding which functions I would want to use to find my solutions.
+### I decided that creating a TEMP table and using CTEs would make running the query easier as I answer each question since I do not want to alter the raw data.
+### 
+
 
 ## Results
 This data gives us information on the site visits and sales on a website. We have information on where the visits are coming from, what they searched for, what they purchased, the time and date, the stock level of each product, product names, etc.
