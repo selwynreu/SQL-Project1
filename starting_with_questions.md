@@ -18,7 +18,7 @@ SQL Queries:
 
 -- Order by total transaction revenue in descending so the highest is listed at the top
 
-'''
+```
 
 SQL
 CREATE TEMP TABLE tbl AS
@@ -48,7 +48,7 @@ WHERE city IS NOT NULL
 GROUP BY country, city 
 ORDER BY totaltransactionrevenue_region DESC
 
-'''
+```
 
 Answer:
 
@@ -72,7 +72,7 @@ SQL Queries:
 
 -- Also decided to round the average values to 2 decimals and remove the average values that equal to 0 in order to keep it as clean as possible
 
-'''
+```
 
 SQL
 WITH cleanedup_allsessions AS
@@ -103,11 +103,11 @@ GROUP BY alls.country, alls.city
 HAVING AVG(p.orderedquantity) > 0
 ORDER BY country, city
 
-'''
+```
 
 -- To find the average number of products ordered from visitors in each country
 
-'''
+```
 
 SQL
 WITH cleanedup_allsessions AS
@@ -135,7 +135,7 @@ GROUP BY alls.country
 HAVING AVG(p.orderedquantity) > 0
 ORDER BY country
 
-'''
+```
 
 Answer:
 
@@ -165,7 +165,7 @@ SQL Queries:
 
 -- This query is for each city
 
-'''
+```
 
 SQL
 WITH category AS
@@ -216,11 +216,11 @@ GROUP BY c.product_category, c.country, c.city
 HAVING SUM(p.orderedquantity) > 0
 ORDER BY c.product_category, rank, c.country, c.city
 
-'''
+```
 
 -- This query would be to find the country with the highest number of products and see if there is a pattern.
 
-'''
+```
 
 SQL
 WITH category AS
@@ -270,7 +270,7 @@ GROUP BY c.product_category, c.country
 HAVING SUM(p.orderedquantity) > 0
 ORDER BY c.product_category, rank, c.country
 
-'''
+```
 
 Answer:
 
@@ -299,7 +299,7 @@ SQL Queries:
 
 -- The first query is to find the top-selling products in each city and the second query is for each country
 
-'''
+```
 
 SQL
 WITH 
@@ -351,11 +351,11 @@ GROUP BY alls.country, alls.city, p.sku, p.clean_name
 HAVING SUM(revenue) > 0
 ORDER BY alls.country, alls.city, rank
 
-'''
+```
 
 -- QUERY 2
 
-'''
+```
 
 SQL
 WITH 
@@ -406,7 +406,7 @@ GROUP BY alls.country, p.sku, p.clean_name
 HAVING SUM(revenue) > 0
 ORDER BY alls.country, rank
 
-'''
+```
 
 Answer:
 
@@ -533,7 +533,7 @@ SQL Queries:
 
 -- Reordered the results by descending order from highest revenue to lowest
 
-'''
+```
 
 SQL
 WITH joineddata AS
@@ -569,11 +569,11 @@ AND city IS NOT NULL
 GROUP BY country, city
 ORDER BY SUM(revenue) DESC
 
-'''
+```
 
 -- QUERY 2 (only country)
 
-'''
+```
 
 SQL
 WITH joineddata AS
@@ -608,7 +608,7 @@ AND city IS NOT NULL
 GROUP BY country
 ORDER BY SUM(revenue) DESC
 
-'''
+```
 
 Answer:
 
