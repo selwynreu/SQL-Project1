@@ -68,7 +68,7 @@ Question 2: What are the most ordered product categories?
 
 SQL Queries:
 
-'''
+```
 
 SQL
 SELECT 
@@ -97,7 +97,7 @@ ON sr.productsku = t.productsku
 GROUP BY product_category
 ORDER BY total_sum_ordered DESC
 
-'''
+```
 
 Answer:
 
@@ -108,7 +108,7 @@ Question 3: Which countries have the highest average time spent on the site by v
 
 SQL Queries:
 
-'''
+```
 
 SQL
 SELECT country, AVG(timeonsite) AS average_time
@@ -117,7 +117,7 @@ WHERE timeonsite > 0
 GROUP BY country
 ORDER BY average_time DESC
 
-'''
+```
 
 Answer:
 
