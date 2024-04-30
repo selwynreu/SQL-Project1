@@ -2,37 +2,46 @@ Question 1: Compare the revenue in months. Is there a pattern that you noticed i
 
 SQL Queries:
 
-'''
-
-SQL
-WITH revenue1 AS
-(
-SELECT 
-	EXTRACT(YEAR FROM t.date) AS year,
-	EXTRACT(MONTH FROM t.date) AS month,
-	CASE WHEN t.country = '(not set)' THEN NULL 
-	ELSE t.country 
-	END AS country, 
-	CASE WHEN t.city = 'not available in demo dataset' THEN NULL 
-	WHEN t.city = '(not set)' THEN NULL 		
-	ELSE t.city 
-	END AS city,
-	a.units_sold, 
-	ROUND(CAST(a.unit_price / 1000000 AS numeric), 2) AS unitprice, 
-	ROUND(CAST((a.units_sold * a.unit_price / 1000000) AS numeric),2) AS revenue
-FROM tbl t
-JOIN analytics a
-USING (fullvisitorid)
-WHERE revenue > 0
+WITH revenue1 AS (
+    SELECT 
+        EXTRACT(YEAR FROM t.date) AS year, 
+        EXTRACT(MONTH FROM t.date) AS month, 
+        CASE 
+            WHEN t.country = '(not set)' THEN NULL 
+            ELSE t.country 
+        END AS country, 
+        CASE 
+            WHEN t.city = 'not available in demo dataset' THEN NULL 
+            WHEN t.city = '(not set)' THEN NULL 
+            ELSE t.city 
+        END AS city, 
+        a.units_sold, 
+        ROUND(CAST(a.unit_price / 1000000 AS numeric), 2) AS unitprice, 
+        ROUND(CAST((a.units_sold * a.unit_price / 1000000) AS numeric),2) AS revenue 
+    FROM 
+        tbl t 
+    JOIN 
+        analytics a USING (fullvisitorid) 
+    WHERE 
+        revenue > 0 
 )
-SELECT year, month, SUM(revenue) AS total
-FROM revenue1
-WHERE country IS NOT NULL
-AND city IS NOT NULL
-GROUP BY year, month
-ORDER BY year, month, total DESC
+SELECT 
+    year, 
+    month, 
+    SUM(revenue) AS total 
+FROM 
+    revenue1 
+WHERE 
+    country IS NOT NULL 
+    AND city IS NOT NULL 
+GROUP BY 
+    year, 
+    month 
+ORDER BY 
+    year, 
+    month, 
+    total DESC
 
-'''
 
 Answer: 
 
