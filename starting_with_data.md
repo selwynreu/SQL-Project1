@@ -2,6 +2,7 @@ Question 1: Compare the revenue in months. Is there a pattern that you noticed i
 
 SQL Queries:
 
+```
 WITH revenue1 AS (
     SELECT 
         EXTRACT(YEAR FROM t.date) AS year, 
@@ -41,7 +42,7 @@ ORDER BY
     year, 
     month, 
     total DESC
-
+```
 
 Answer: 
 
